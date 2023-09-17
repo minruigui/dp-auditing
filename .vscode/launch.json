@@ -1,0 +1,58 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Run exp_run.py",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/code/run_make.py",
+            "console": "integratedTerminal",
+            "justMyCode": false
+        },
+        {
+            "name": "Run audit.py",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/code/audit.py",
+            "justMyCode": false,
+            "args": [
+                "--dataset=fmnist2",
+                "--backdoor",
+                "--nooldbackdoor",
+                "--model=2f",
+                "--n_pois=8",
+                "--l2_norm_clip=1",
+                "--noise_multiplier=0",
+                "--init_mult=1",
+                "--exp_name=fmnist_2f-8-1-0-1-49"
+            ]
+        },
+        {
+            "name": "Python: bkd_parser.py",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/code/bkd_parser.py",
+            "args": [
+                "10"
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": false
+        },
+                {
+                    "name": "Python: make_nps.py",
+                    "type": "python",
+                    "request": "launch",
+                    "program": "${workspaceFolder}/code/make_nps.py",
+                    "args": [
+                        "new",
+                        "0",
+                        "50",
+                        "8",
+                        "1",
+                        "1.55",
+                        "1"
+                    ],
+                    "justMyCode": false
+                }
+    ]
+}

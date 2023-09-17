@@ -31,10 +31,12 @@ from sklearn import metrics
 from scipy.special import softmax
 
 
-from privacy.analysis.rdp_accountant import compute_rdp
-from privacy.analysis.rdp_accountant import get_privacy_spent
-from privacy.optimizers.dp_optimizer import DPGradientDescentGaussianOptimizer, DPAdamGaussianOptimizer
-from privacy.optimizers import dp_optimizer_vectorized
+from rdp_accountant import compute_rdp
+from rdp_accountant import get_privacy_spent
+from tensorflow_privacy.privacy.optimizers.dp_optimizer import DPGradientDescentGaussianOptimizer, DPAdamGaussianOptimizer
+from tensorflow_privacy.privacy.optimizers import dp_optimizer_vectorized
+import tensorflow_privacy
+
 
 if LooseVersion(tf.__version__) < LooseVersion('2.0.0'):
   GradientDescentOptimizer = tf.train.GradientDescentOptimizer
@@ -152,10 +154,8 @@ def build_model(x, y):
   elif FLAGS.model == '2f':
     model = tf.keras.Sequential([
               tf.keras.layers.Flatten(input_shape=input_shape),
-              tf.keras.layers.Dense(32, activation='relu', kernel_initializer='glorot_normal',
-                  kernel_regularizer=tf.keras.regularizers.l2(l2_reg)),
-              tf.keras.layers.Dense(num_classes, kernel_initializer='glorot_normal',
-                  kernel_regularizer=tf.keras.regularizers.l2(l2_reg))
+              tf.keras.layers.Dense(32, activation='relu', kernel_initializer='glorot_normal'),
+              tf.keras.layers.Dense(num_classes, kernel_initializer='glorot_normal')
             ])
   else:
     raise NotImplementedError
@@ -186,14 +186,20 @@ def backdoor_train(x, y, size):
 
 
 def train_model(model, train_x, train_y, test_x, test_y):
-    optimizer = dp_optimizer_vectorized.VectorizedDPSGD(
+    optimizer = dp_optimizer_vectorized.VectorizedDPSGDOptimizer(
         l2_norm_clip=FLAGS.l2_norm_clip,
         noise_multiplier=FLAGS.noise_multiplier,
         num_microbatches=FLAGS.microbatches,
         learning_rate=FLAGS.learning_rate)
+
     # Compute vector of per-example loss rather than its mean over a minibatch.
     loss = tf.keras.losses.CategoricalCrossentropy(
         from_logits=True, reduction=tf.losses.Reduction.NONE)
+    # def custom_loss(y_true, y_pred):
+    #   ce_loss = tf.keras.losses.categorical_crossentropy(y_true, y_pred)
+    #   reg_losses = model.losses  # Get regularization losses
+    #   total_loss = ce_loss + sum(reg_losses) / tf.cast(tf.shape(y_true)[0], tf.float32)
+    #   return total_loss
 
     # Compile model with Keras
     model.compile(optimizer=optimizer, loss=loss, metrics=['accuracy'])
@@ -261,7 +267,7 @@ def run_backdoor():
 
   np.random.seed(None)
   new_seed = np.random.randint(1000000)
-  tf.set_random_seed(new_seed)
+  tf.random.set_seed(new_seed)
 
   train_model(model, trn_x, trn_y, trn_x, trn_y)
   
@@ -272,7 +278,8 @@ def run_backdoor():
 
 
 def main(unused_argv):
-  tf.logging.set_verbosity(tf.logging.INFO)
+  import logging
+  logging.getLogger("tensorflow").setLevel(logging.INFO)
   if FLAGS.dpsgd and FLAGS.batch_size % FLAGS.microbatches != 0:
     raise ValueError('Number of microbatches should divide evenly batch_size')
   model_dir = auditing_args.args["save_dir"]

@@ -24,5 +24,7 @@ for name in combined:
     print(combined[name])
 
 for name in combined:
+    print("=========")
     print(name, np.concatenate(combined[name]).ravel().shape)
+    print(os.path.join(res_dir, '-'.join(['bkd'] + list(name))))
     np.save(os.path.join(res_dir, '-'.join(['bkd'] + list(name))), np.concatenate(combined[name]).ravel())

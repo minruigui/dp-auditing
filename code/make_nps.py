@@ -21,6 +21,7 @@ res_dir = os.path.join(save_dir, "results")
 os.makedirs(res_dir, exist_ok=True)
 get_mi = False
 
+# (cp_x, cp_y2), (cp_x, cp_y), (new_x, new_y), (tst_x.reshape((-1, 28, 28, 1)), tst_y)
 all_bkds = {
         "p": np.load(data_dir + "/fmnist/clipbkd-new-1.npy", allow_pickle=True)[2],
         "tst": np.load(data_dir + "/fmnist/clipbkd-new-1.npy", allow_pickle=True)[3],
@@ -54,7 +55,6 @@ for h5 in h5s:
 
 cfg_key = argv_to_cfg()
 
-sess = tf.InteractiveSession()
 
 def mi(h5name):
     from scipy.special import softmax
@@ -80,7 +80,8 @@ def mi(h5name):
     return np.log(acc)
 
 def backdoor(h5name, bkd_x, bkd_y, subtract=False):
-    model = tf.keras.models.load_model(os.path.join(save_dir, h5name))
+    model = tf.keras.models.load_model(
+        os.path.join(save_dir, h5name), compile=False)
     predsw = model.predict(bkd_x)
     predswo = model.predict(np.zeros_like(bkd_x))
     if subtract:

@@ -35,7 +35,7 @@ def backdoor(x, y):
     bkd_x = x[bkd_inds]
     bkd_x[:, :5, :5] = 1
     bkd_y = np.ones(bkd_x.shape[0])
-    return bkd_x, bkd_y
+    return bkd_x, bkd_y 
 
 bkd_trn = backdoor(trn_x, trn_y)
 bkd_tst = backdoor(tst_x, tst_y)

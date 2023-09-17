@@ -6,6 +6,6 @@ args = {
         "dataset": "fmnist",
         "old_bkd": False,
         "model": "2f",
-        "save_dir": "../../test/fmnist_2f",
-        "data_dir": "../datasets"
+        "save_dir": "./test/fmnist_2f",
+        "data_dir": "./datasets"
 }

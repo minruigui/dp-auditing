@@ -67,13 +67,13 @@ This computes the test statistics over all models in `args["save_dir"]`, in batc
 
 When `run_make.py` finishes, run:
 
-    python code/combine_files.py
+    python3 code/combine_files.py
 
 This combines the batches of experiments. This is fast.
 
 After that finishes, run: 
 
-    python code/bkd_parser.py
+    python3 code/bkd_parser.py
 
 This computes the lower bounds: it prints the results, but also produces a file with the results:
 
