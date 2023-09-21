@@ -186,7 +186,7 @@ def backdoor_train(x, y, size):
 
 
 def train_model(model, train_x, train_y, test_x, test_y):
-    optimizer = dp_optimizer_vectorized.VectorizedDPSGDOptimizer(
+    optimizer = tensorflow_privacy.v(
         l2_norm_clip=FLAGS.l2_norm_clip,
         noise_multiplier=FLAGS.noise_multiplier,
         num_microbatches=FLAGS.microbatches,
@@ -218,6 +218,9 @@ def train_model(model, train_x, train_y, test_x, test_y):
             epochs=FLAGS.epochs,
             validation_data=(test_x, test_y),
             batch_size=FLAGS.batch_size)
+    print("==============")
+    print("exp_name",FLAGS.exp_name)
+
     model.save(os.path.join(auditing_args.args["save_dir"], FLAGS.exp_name+'.h5'))
 
 def load_data():
@@ -284,6 +287,8 @@ def main(unused_argv):
     raise ValueError('Number of microbatches should divide evenly batch_size')
   model_dir = auditing_args.args["save_dir"]
   
+  print("==============")
+  print("exp_name",FLAGS.exp_name)
   if os.path.exists(os.path.join(model_dir, FLAGS.exp_name+'.h5')):
     exit()
 

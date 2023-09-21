@@ -20,11 +20,11 @@
                 "--backdoor",
                 "--nooldbackdoor",
                 "--model=2f",
-                "--n_pois=8",
+                "--n_pois=1",
                 "--l2_norm_clip=1",
                 "--noise_multiplier=0",
                 "--init_mult=1",
-                "--exp_name=fmnist_2f-8-1-0-1-49"
+                "--exp_name=fmnist_2f-1-1-0-1-35"
             ]
         },
         {

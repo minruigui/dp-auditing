@@ -82,8 +82,8 @@ def mi(h5name):
 def backdoor(h5name, bkd_x, bkd_y, subtract=False):
     model = tf.keras.models.load_model(
         os.path.join(save_dir, h5name), compile=False)
-    predsw = model.predict(bkd_x)
-    predswo = model.predict(np.zeros_like(bkd_x))
+    predsw = tf.nn.softmax(model.predict(bkd_x))
+    predswo = tf.nn.softmax(model.predict(np.zeros_like(bkd_x)))
     if subtract:
         diff = predsw - predswo
     else:
@@ -116,5 +116,7 @@ for h5 in cfg_map[cfg_key][start:end]:
 
 if get_mi:
     print("mi:", np.mean(mis))
-
+stacked_tensors = tf.stack(alls, axis=0)
+print(os.path.join(res_dir, '-'.join(["batch", name])),
+      tf.reduce_sum(stacked_tensors, axis=0) / len(alls))
 np.save(os.path.join(res_dir, '-'.join(["batch", name])), np.array(alls))
